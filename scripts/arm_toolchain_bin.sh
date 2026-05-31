@@ -51,6 +51,8 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 ARM embedded toolchain was not found.
 Install it with a Homebrew Arm GNU toolchain cask, for example:
   brew install --cask gcc-arm-embedded
+If you already installed it in a custom location, set:
+  ARM_TOOLCHAIN_BASES=/custom/path1:/custom/path2
 Then run the build command again.
 EOF
     exit 1
