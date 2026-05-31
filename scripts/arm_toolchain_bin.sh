@@ -13,6 +13,7 @@ has_complete_toolchain_bin() {
         fi
     done
 
+    # stdint.h is used as a lightweight signal that the target libc/newlib sysroot is installed.
     local sysroot
     sysroot="$("${bin_dir}/arm-none-eabi-gcc" -print-sysroot 2>/dev/null || true)"
     [[ -n "${sysroot}" && -f "${sysroot}/include/stdint.h" ]]
@@ -48,7 +49,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 
     cat >&2 <<'EOF'
 ARM embedded toolchain was not found.
-Install it with:
+Install it with a Homebrew Arm GNU toolchain cask, for example:
   brew install --cask gcc-arm-embedded
 Then run the build command again.
 EOF
