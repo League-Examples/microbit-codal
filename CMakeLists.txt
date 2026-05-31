@@ -35,6 +35,7 @@ endif()
 #
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 #read our config file...

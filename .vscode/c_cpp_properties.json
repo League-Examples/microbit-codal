@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "CODAL",
             "includePath": [
                 "${workspaceFolder}/source/**",
                 "${workspaceFolder}/libraries/**",
@@ -9,7 +9,7 @@
                 "${workspaceFolder}/build/libraries/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/arm-none-eabi-g++",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
             "compilerArgs": ["-DNRF52833_XXAA"],
             "cStandard": "c11",
             "cppStandard": "c++11",
