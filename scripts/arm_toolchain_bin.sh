@@ -27,7 +27,8 @@ fi
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     candidates=()
-    for base in /Applications/ArmGNUToolchain /usr/local/ArmGNUToolchain; do
+    IFS=':' read -r -a arm_toolchain_bases <<< "${ARM_TOOLCHAIN_BASES:-/Applications/ArmGNUToolchain:/usr/local/ArmGNUToolchain}"
+    for base in "${arm_toolchain_bases[@]}"; do
         for gcc_path in "${base}"/*/arm-none-eabi/bin/arm-none-eabi-gcc; do
             [[ -e "${gcc_path}" ]] || continue
             candidates+=("${gcc_path}")

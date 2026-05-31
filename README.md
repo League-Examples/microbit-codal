@@ -32,7 +32,7 @@ Install dependencies:
     just setup-macos
 ```
 
-`scripts/arm_toolchain_bin.sh` automatically locates a complete Arm GNU toolchain from PATH or `/Applications/ArmGNUToolchain/*/arm-none-eabi/bin` (for Homebrew cask installs), so manual symlinks are not required.
+`scripts/arm_toolchain_bin.sh` automatically locates a complete Arm GNU toolchain from PATH or standard macOS bundle locations (`/Applications/ArmGNUToolchain` and `/usr/local/ArmGNUToolchain` for Homebrew cask installs), so manual symlinks are not required. For custom locations, set `ARM_TOOLCHAIN_BASES=/custom/path1:/custom/path2`.
 
 ## Linux setup
 
@@ -99,7 +99,7 @@ To omit the final output stage (for CI, for example) run without the `--output` 
 
 # Building
 - Clone this repository
-- In the root of this repository type `just build` (or `PATH="$(./scripts/arm_toolchain_bin.sh):$PATH" uv run python3 build.py` from a POSIX shell such as bash/zsh)
+- In the root of this repository type `just build` (or `PATH="$(./scripts/arm_toolchain_bin.sh):$PATH" uv run python3 build.py` from a POSIX shell such as bash/zsh; `$$` is only needed inside `justfile` recipes)
 - The hex file will be built `MICROBIT.hex` and placed in the root folder.
 
 ## IntelliSense / compile commands
