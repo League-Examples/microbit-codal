@@ -27,9 +27,11 @@ fi
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     candidates=()
-    for gcc_path in /Applications/ArmGNUToolchain/*/arm-none-eabi/bin/arm-none-eabi-gcc; do
-        [[ -e "${gcc_path}" ]] || continue
-        candidates+=("${gcc_path}")
+    for base in /Applications/ArmGNUToolchain /usr/local/ArmGNUToolchain; do
+        for gcc_path in "${base}"/*/arm-none-eabi/bin/arm-none-eabi-gcc; do
+            [[ -e "${gcc_path}" ]] || continue
+            candidates+=("${gcc_path}")
+        done
     done
 
     if ((${#candidates[@]} > 0)); then

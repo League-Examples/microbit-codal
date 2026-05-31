@@ -6,7 +6,7 @@ default:
 setup-macos:
     brew install --cask gcc-arm-embedded
     brew install uv
-    ./scripts/arm_toolchain_bin.sh
+    echo "Using ARM toolchain at: $$(./scripts/arm_toolchain_bin.sh)"
 
 setup-linux:
     sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi python3 python3-pip
