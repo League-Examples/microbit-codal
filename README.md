@@ -24,25 +24,22 @@ We use Ubuntu Linux for most of our tests. You can also install these tools easi
     sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi
 ```
 
-## macOS clean setup (recommended)
+## macOS setup (recommended)
 
-Use these exact commands to avoid mixed/incomplete ARM toolchains:
-
-```
-    brew uninstall arm-none-eabi-gcc arm-none-eabi-binutils
-    brew install --cask gcc-arm-embedded
-    brew install uv
-```
-
-If `arm-none-eabi-gcc` is not found after installation, add links once:
+Install dependencies:
 
 ```
-    ln -s /Applications/ArmGNUToolchain/15.2.rel1/arm-none-eabi/bin/arm-none-eabi-gcc /opt/homebrew/bin/arm-none-eabi-gcc
-    ln -s /Applications/ArmGNUToolchain/15.2.rel1/arm-none-eabi/bin/arm-none-eabi-g++ /opt/homebrew/bin/arm-none-eabi-g++
-    ln -s /Applications/ArmGNUToolchain/15.2.rel1/arm-none-eabi/bin/arm-none-eabi-ar /opt/homebrew/bin/arm-none-eabi-ar
-    ln -s /Applications/ArmGNUToolchain/15.2.rel1/arm-none-eabi/bin/arm-none-eabi-ranlib /opt/homebrew/bin/arm-none-eabi-ranlib
-    ln -s /Applications/ArmGNUToolchain/15.2.rel1/arm-none-eabi/bin/arm-none-eabi-objcopy /opt/homebrew/bin/arm-none-eabi-objcopy
-    ln -s /Applications/ArmGNUToolchain/15.2.rel1/arm-none-eabi/bin/arm-none-eabi-size /opt/homebrew/bin/arm-none-eabi-size
+    just setup-macos
+```
+
+`scripts/arm_toolchain_bin.sh` automatically locates a complete Arm GNU toolchain from PATH or standard macOS bundle locations (`/Applications/ArmGNUToolchain` and `/usr/local/ArmGNUToolchain`).
+Manual symlinks are not required.
+For custom locations, set `ARM_TOOLCHAIN_BASES=/custom/path1:/custom/path2`.
+
+## Linux setup
+
+```
+    just setup-linux
 ```
 
 ## Python + UV setup
@@ -74,6 +71,9 @@ The repository includes a `justfile` to run common setup/build/deploy workflows.
 
 ```
     just --list
+    just setup-macos
+    just setup-linux
+    just arm-toolchain
     just uv-sync
     just build
     just build-clean
@@ -101,8 +101,13 @@ To omit the final output stage (for CI, for example) run without the `--output` 
 
 # Building
 - Clone this repository
-- In the root of this repository type `uv run python3 build.py`
+- In the root of this repository type `just build`
+- Raw command alternative (POSIX shell such as bash/zsh): `PATH="$(./scripts/arm_toolchain_bin.sh):$PATH" uv run python3 build.py`
 - The hex file will be built `MICROBIT.hex` and placed in the root folder.
+
+## IntelliSense / compile commands
+
+This project exports `build/compile_commands.json` from CMake. VS Code C/C++ configuration consumes this file directly (`.vscode/c_cpp_properties.json`) to avoid platform-specific `compilerPath` settings.
 
 ## Build + deploy scripts
 
