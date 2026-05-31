@@ -99,7 +99,8 @@ To omit the final output stage (for CI, for example) run without the `--output` 
 
 # Building
 - Clone this repository
-- In the root of this repository type `just build` (or `PATH="$(./scripts/arm_toolchain_bin.sh):$PATH" uv run python3 build.py` from a POSIX shell such as bash/zsh; `$$` is only needed inside `justfile` recipes)
+- In the root of this repository type `just build`
+- Raw command alternative (POSIX shell such as bash/zsh): `PATH="$(./scripts/arm_toolchain_bin.sh):$PATH" uv run python3 build.py` (`$$` is only needed inside `justfile` recipes)
 - The hex file will be built `MICROBIT.hex` and placed in the root folder.
 
 ## IntelliSense / compile commands

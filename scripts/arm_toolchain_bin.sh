@@ -2,6 +2,7 @@
 set -euo pipefail
 
 required_tools=(arm-none-eabi-gcc arm-none-eabi-g++ arm-none-eabi-ar arm-none-eabi-ranlib arm-none-eabi-objcopy arm-none-eabi-size)
+default_macos_toolchain_bases="/Applications/ArmGNUToolchain:/usr/local/ArmGNUToolchain"
 
 has_complete_toolchain_bin() {
     local bin_dir="$1"
@@ -27,7 +28,7 @@ fi
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     candidates=()
-    IFS=':' read -r -a arm_toolchain_bases <<< "${ARM_TOOLCHAIN_BASES:-/Applications/ArmGNUToolchain:/usr/local/ArmGNUToolchain}"
+    IFS=':' read -r -a arm_toolchain_bases <<< "${ARM_TOOLCHAIN_BASES:-${default_macos_toolchain_bases}}"
     for base in "${arm_toolchain_bases[@]}"; do
         for gcc_path in "${base}"/*/arm-none-eabi/bin/arm-none-eabi-gcc; do
             [[ -e "${gcc_path}" ]] || continue
