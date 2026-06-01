@@ -114,7 +114,6 @@ def deploy_pyocd(hex_path: Path, target: str, uid: str | None) -> None:
         subprocess.run(cmd, check=True)
     except subprocess.CalledProcessError as exc:
         raise RuntimeError(f"pyOCD flash failed with exit code {exc.returncode}.") from exc
-    print("Deploy path: pyOCD load")
 
 
 def main() -> int:
@@ -145,6 +144,7 @@ def main() -> int:
     try:
         if args.method == "pyocd":
             deploy_pyocd(hex_path, args.target, args.uid)
+            print("Deploy path: pyOCD load")
         else:
             deploy_usb(hex_path, args.usb_mount)
             print("Deploy path: local USB copy")
