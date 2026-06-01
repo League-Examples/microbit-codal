@@ -3,17 +3,38 @@
         {
             "name": "CODAL",
             "includePath": [
-                "${workspaceFolder}/source/**",
-                "${workspaceFolder}/libraries/**",
-                "${workspaceFolder}/utils/cmake/**",
-                "${workspaceFolder}/build/libraries/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/build/**",
+                "${workspaceFolder}/libraries/**"
             ],
-            "defines": [],
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
-            "compilerArgs": ["-DNRF52833_XXAA"],
+            "defines": [
+                "_DEBUG=1",
+                "__CORTEX_M4",
+                "__FPU_PRESENT",
+                "SOFTDEVICE_PRESENT",
+                "NRF52",
+                "NRF52833_XXAA",
+                "NRF5",
+                "MICROBIT_CODAL",
+                "MICROBIT_DAL_VERSION=\"2.2.0\"",
+                "MICROBIT_PANIC_HEAP_FULL=1",
+                "MICROBIT_HEAP_ALLOCATOR=1",
+                "MICROBIT_SYSTEM_COMPONENTS=\"\"",
+                "CONFIG_ENABLED_DEVICE_SERIAL=1",
+                "CONFIG_ENABLED_BLE=1",
+                "DEVICE_DMESG_BUFFER_SIZE=1024",
+                "__STATIC_INLINE=static inline",
+                "__STATIC_FORCEINLINE=static inline",
+                "__INLINE=inline",
+                "__FORCEINLINE=inline",
+                "NRF_STATIC_INLINE=static inline",
+                "NRFX_STATIC_INLINE=static inline"
+            ],
+            "compilerPath": "arm-none-eabi-g++",
             "cStandard": "c11",
-            "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-arm"
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-arm",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

@@ -4,12 +4,17 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
-import requests
-from dotenv import load_dotenv
 import os
+
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - optional convenience dependency
+    def load_dotenv(*_args: object, **_kwargs: object) -> bool:
+        return False
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +25,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--hex", dest="hex_path", default=None, help="Hex path (default auto-detect)")
     parser.add_argument("--console-url", default=None, help="Console base URL")
     parser.add_argument("--console-key", default=None, help="Console auth key")
+    parser.add_argument("--target", default="nrf52833", help="pyOCD target type")
+    parser.add_argument("--uid", default=None, help="pyOCD probe unique ID")
+    parser.add_argument(
+        "--method",
+        choices=("pyocd", "usb"),
+        default="pyocd",
+        help="Local deploy method when console deploy is not configured",
+    )
     parser.add_argument("--usb-mount", default=None, help="USB mount path (default: /Volumes/MICROBIT)")
     parser.add_argument("--timeout", type=int, default=30, help="HTTP timeout seconds")
     return parser.parse_args()
@@ -48,6 +61,11 @@ def resolve_hex_path(explicit_hex: str | None) -> Path:
 
 
 def deploy_console(console_url: str, console_key: str, hex_path: Path, timeout: int) -> None:
+    try:
+        import requests
+    except ImportError as exc:  # pragma: no cover - only needed for console deploy
+        raise RuntimeError("requests is required for console deploy. Install dependencies with `uv sync`.") from exc
+
     endpoint = f"{console_url.rstrip('/')}/api/hex"
     data = hex_path.read_bytes()
 
@@ -81,6 +99,20 @@ def deploy_usb(hex_path: Path, usb_mount: str | None) -> None:
     print(f"Copied {hex_path} -> {destination}")
 
 
+def deploy_pyocd(hex_path: Path, target: str, uid: str | None) -> None:
+    if shutil.which("pyocd") is None:
+        raise RuntimeError(
+            "pyocd is not installed or not on PATH. Install it with `uv tool install pyocd` or `pipx install pyocd`."
+        )
+
+    cmd = ["pyocd", "load", str(hex_path), "--target", target]
+    if uid:
+        cmd.extend(["--uid", uid])
+
+    subprocess.run(cmd, check=True)
+    print("Deploy path: pyOCD load")
+
+
 def main() -> int:
     args = parse_args()
 
@@ -105,10 +137,13 @@ def main() -> int:
             print(f"Console deploy failed: {exc}", file=sys.stderr)
             return 1
 
-    print("CONSOLE_URL and/or CONSOLE_KEY not set. Using local USB deploy.")
+    print(f"CONSOLE_URL and/or CONSOLE_KEY not set. Using local {args.method} deploy.")
     try:
-        deploy_usb(hex_path, args.usb_mount)
-        print("Deploy path: local USB copy")
+        if args.method == "pyocd":
+            deploy_pyocd(hex_path, args.target, args.uid)
+        else:
+            deploy_usb(hex_path, args.usb_mount)
+            print("Deploy path: local USB copy")
         return 0
     except Exception as exc:
         print(f"Local deploy failed: {exc}", file=sys.stderr)

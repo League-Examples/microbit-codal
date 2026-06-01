@@ -6,6 +6,7 @@ default:
 setup-macos:
     brew install --cask gcc-arm-embedded
     brew install uv
+    uv tool install --force pyocd
     echo "Using ARM toolchain at: $$(./scripts/arm_toolchain_bin.sh)"
 
 setup-linux:
@@ -32,3 +33,6 @@ deploy *args='':
 
 build-deploy *args='':
     PATH="$$(./scripts/arm_toolchain_bin.sh):$$PATH" uv run python3 scripts/build_and_deploy.py {{args}}
+
+list-devices:
+    uv run python3 scripts/list_devices.py
