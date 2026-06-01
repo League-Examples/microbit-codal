@@ -14,6 +14,7 @@ try:
     from dotenv import load_dotenv
 except ImportError:  # pragma: no cover - optional convenience dependency
     def load_dotenv(*args: object, **kwargs: object) -> bool:
+        """No-op fallback when python-dotenv is not installed."""
         _ = (args, kwargs)
         return False
 
@@ -107,7 +108,7 @@ def deploy_pyocd(hex_path: Path, target: str, uid: str | None) -> None:
         )
 
     cmd = ["pyocd", "load", str(hex_path), "--target", target]
-    if uid:
+    if uid is not None:
         cmd.extend(["--uid", uid])
 
     try:
