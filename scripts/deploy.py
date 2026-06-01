@@ -13,7 +13,8 @@ import os
 try:
     from dotenv import load_dotenv
 except ImportError:  # pragma: no cover - optional convenience dependency
-    def load_dotenv(*__args: object, **__kwargs: object) -> bool:
+    def load_dotenv(*args: object, **kwargs: object) -> bool:
+        _ = (args, kwargs)
         return False
 
 
@@ -109,7 +110,10 @@ def deploy_pyocd(hex_path: Path, target: str, uid: str | None) -> None:
     if uid:
         cmd.extend(["--uid", uid])
 
-    subprocess.run(cmd, check=True)
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(f"pyOCD flash failed with exit code {exc.returncode}.") from exc
     print("Deploy path: pyOCD load")
 
 
