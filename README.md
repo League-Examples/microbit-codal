@@ -35,6 +35,7 @@ Install dependencies:
 `scripts/arm_toolchain_bin.sh` automatically locates a complete Arm GNU toolchain from PATH or standard macOS bundle locations (`/Applications/ArmGNUToolchain` and `/usr/local/ArmGNUToolchain`).
 Manual symlinks are not required.
 For custom locations, set `ARM_TOOLCHAIN_BASES=/custom/path1:/custom/path2`.
+The `setup-macos` recipe also installs `pyocd` for probe-based flashing.
 
 ## Linux setup
 
@@ -77,6 +78,7 @@ The repository includes a `justfile` to run common setup/build/deploy workflows.
     just uv-sync
     just build
     just build-clean
+    just list-devices
     just deploy -- --usb-mount /Volumes/MICROBIT
     just build-deploy -- --clean
 ```
@@ -107,20 +109,23 @@ To omit the final output stage (for CI, for example) run without the `--output` 
 
 ## IntelliSense / compile commands
 
-This project exports `build/compile_commands.json` from CMake. VS Code C/C++ configuration consumes this file directly (`.vscode/c_cpp_properties.json`) to avoid platform-specific `compilerPath` settings.
+This project exports `build/compile_commands.json` from CMake, and VS Code can use it.
+For the Nordic SDK inline-macro parsing edge case, `.vscode/c_cpp_properties.json` also defines the required inline macros directly and uses `arm-none-eabi-g++` from `PATH` (instead of a hardcoded OS-specific path).
 
 ## Build + deploy scripts
 
 The project includes Python scripts in `scripts/`:
 
 - `scripts/build.py`: wrapper around repository `build.py`
-- `scripts/deploy.py`: deploys hex to console (`CONSOLE_URL` + `CONSOLE_KEY`) or local USB mount
+- `scripts/deploy.py`: deploys hex to console (`CONSOLE_URL` + `CONSOLE_KEY`), or flashes locally via `pyocd`
 - `scripts/build_and_deploy.py`: runs build then deploy
+- `scripts/list_devices.py`: lists probes discovered by `pyocd`
 
 Examples:
 
 ```
     uv run python3 scripts/build.py --clean
+    uv run python3 scripts/list_devices.py
     uv run python3 scripts/deploy.py
     uv run python3 scripts/build_and_deploy.py --clean
 ```
@@ -131,10 +136,17 @@ Console deploy with explicit arguments:
     uv run python3 scripts/build_and_deploy.py --console-url https://your-console.example --console-key YOUR_KEY
 ```
 
-USB deploy uses `/Volumes/MICROBIT` by default. Override with:
+By default, local deploy uses `pyocd`:
 
 ```
-    uv run python3 scripts/deploy.py --usb-mount /Volumes/YOUR_DEVICE
+    uv run python3 scripts/deploy.py --target nrf52833
+    uv run python3 scripts/deploy.py --uid <probe-unique-id>
+```
+
+USB deploy is still available when explicitly requested:
+
+```
+    uv run python3 scripts/deploy.py --method usb --usb-mount /Volumes/YOUR_DEVICE
 ```
 
 # Developing
