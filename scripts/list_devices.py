@@ -15,7 +15,7 @@ def main() -> int:
         )
         return 1
 
-    return subprocess.run(["pyocd", "list", "--probes"], check=False).returncode
+    return subprocess.run(["pyocd", "list", "--probes"]).returncode
 
 
 if __name__ == "__main__":

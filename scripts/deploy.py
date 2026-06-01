@@ -13,7 +13,7 @@ import os
 try:
     from dotenv import load_dotenv
 except ImportError:  # pragma: no cover - optional convenience dependency
-    def load_dotenv(*_args: object, **_kwargs: object) -> bool:
+    def load_dotenv(*__args: object, **__kwargs: object) -> bool:
         return False
 
 
